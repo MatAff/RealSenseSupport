@@ -20,7 +20,8 @@ int main()
     while(1)
     {
         //Get each frame
-        cv::Mat frame = rs.getColor();
+        //cv::Mat frame = rs.getColor();
+        cv::Mat frame = rs.getIR();
 
         // Display in a GUI
         namedWindow("Window", WINDOW_AUTOSIZE );

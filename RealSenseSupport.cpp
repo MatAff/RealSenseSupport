@@ -14,6 +14,8 @@ RealSenseSupport::RealSenseSupport()
 {
     //Add desired streams to configuration
     cfg.enable_stream(RS2_STREAM_COLOR, 640, 480, RS2_FORMAT_BGR8, 30);
+    cfg.enable_stream(RS2_STREAM_INFRARED, 640, 480, RS2_FORMAT_Y8, 30);
+    cfg.enable_stream(RS2_STREAM_DEPTH, 640, 480, RS2_FORMAT_Z16, 30);
 
     //Instruct pipeline to start streaming with the requested configuration
     pipe.start(cfg);
@@ -32,7 +34,6 @@ RealSenseSupport::~RealSenseSupport()
 {
 }
 
-
 cv::Mat RealSenseSupport::getColor()
 {
     frames = pipe.wait_for_frames();
@@ -45,3 +46,18 @@ cv::Mat RealSenseSupport::getColor()
     return color;
 }
 
+cv::Mat RealSenseSupport::getIR()
+{
+    frames = pipe.wait_for_frames();
+    rs2::frame ir_frame = frames.first(RS2_STREAM_INFRARED);
+    
+    // Creating OpenCV matrix from IR image
+    cv::Mat ir(Size(640, 480), CV_8UC1, (void*)ir_frame.get_data(), Mat::AUTO_STEP);
+
+    // Apply Histogram Equalization
+    equalizeHist( ir, ir );
+    applyColorMap(ir, ir, COLORMAP_JET);
+
+    // Return ir image
+    return ir;
+}

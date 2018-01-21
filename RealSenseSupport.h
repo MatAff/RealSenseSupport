@@ -20,6 +20,7 @@ public:
     ~RealSenseSupport ();
 
     cv::Mat getColor();
+    cv::Mat getIR();
 private:
 
     //Contruct a pipeline which abstracts the device
