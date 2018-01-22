@@ -21,6 +21,8 @@ public:
 
     cv::Mat getColor();
     cv::Mat getIR();
+    cv::Mat getDepth();
+
 private:
 
     //Contruct a pipeline which abstracts the device

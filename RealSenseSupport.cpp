@@ -49,7 +49,7 @@ cv::Mat RealSenseSupport::getColor()
 cv::Mat RealSenseSupport::getIR()
 {
     frames = pipe.wait_for_frames();
-    rs2::frame ir_frame = frames.first(RS2_STREAM_INFRARED);
+    rs2::frame ir_frame = frames.first(RS2_STREAM_DEPTH);
     
     // Creating OpenCV matrix from IR image
     cv::Mat ir(Size(640, 480), CV_8UC1, (void*)ir_frame.get_data(), Mat::AUTO_STEP);
@@ -61,3 +61,21 @@ cv::Mat RealSenseSupport::getIR()
     // Return ir image
     return ir;
 }
+
+cv::Mat RealSenseSupport::getDepth()
+{
+    frames = pipe.wait_for_frames();
+    rs2::frame depth_frame = frames.first(RS2_STREAM_INFRARED);
+    
+    // Creating OpenCV matrix from IR image
+    cv::Mat depth(Size(640, 480), CV_8UC1, (void*)depth_frame.get_data(), Mat::AUTO_STEP);
+
+    // Apply Histogram Equalization
+    equalizeHist( depth, depth );
+    applyColorMap(depth, depth, COLORMAP_JET);
+
+    // Return image
+    return depth;
+}
+
+
