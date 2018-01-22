@@ -21,7 +21,8 @@ int main()
     {
         //Get each frame
         //cv::Mat frame = rs.getColor();
-        cv::Mat frame = rs.getIR();
+        //cv::Mat frame = rs.getIR();
+        cv::Mat frame = rs.getDepth();
 
         // Display in a GUI
         namedWindow("Window", WINDOW_AUTOSIZE );

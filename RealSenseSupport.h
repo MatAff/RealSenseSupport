@@ -33,6 +33,9 @@ private:
 
     // Frame set 
     rs2::frameset frames;
+    
+    // Declare depth colorizer for pretty visualization of depth data
+    rs2::colorizer color_map;
 };
  
 

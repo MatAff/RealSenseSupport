@@ -49,7 +49,7 @@ cv::Mat RealSenseSupport::getColor()
 cv::Mat RealSenseSupport::getIR()
 {
     frames = pipe.wait_for_frames();
-    rs2::frame ir_frame = frames.first(RS2_STREAM_DEPTH);
+    rs2::frame ir_frame = frames.first(RS2_STREAM_INFRARED);
     
     // Creating OpenCV matrix from IR image
     cv::Mat ir(Size(640, 480), CV_8UC1, (void*)ir_frame.get_data(), Mat::AUTO_STEP);
@@ -65,17 +65,14 @@ cv::Mat RealSenseSupport::getIR()
 cv::Mat RealSenseSupport::getDepth()
 {
     frames = pipe.wait_for_frames();
-    rs2::frame depth_frame = frames.first(RS2_STREAM_INFRARED);
+    //rs2::frame ir_frame = frames.first(RS2_STREAM_DEPTH);
+    rs2::frame depth = color_map(frames.get_depth_frame()); // Find and colorize the depth data
     
-    // Creating OpenCV matrix from IR image
-    cv::Mat depth(Size(640, 480), CV_8UC1, (void*)depth_frame.get_data(), Mat::AUTO_STEP);
-
-    // Apply Histogram Equalization
-    equalizeHist( depth, depth );
-    applyColorMap(depth, depth, COLORMAP_JET);
+    // Creating OpenCV Matrix from a color image
+    Mat color(Size(640, 480), CV_8UC3, (void*)depth.get_data(), Mat::AUTO_STEP);
 
     // Return image
-    return depth;
+    return color;
 }
 
 
