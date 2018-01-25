@@ -66,7 +66,15 @@ cv::Mat RealSenseSupport::getDepth()
 {
     frames = pipe.wait_for_frames();
     //rs2::frame ir_frame = frames.first(RS2_STREAM_DEPTH);
-    rs2::frame depth = color_map(frames.get_depth_frame()); // Find and colorize the depth data
+    const rs2::frame depth_frame = frames.get_depth_frame(); // Find depth data
+    rs2::frame depth = color_map(depth_frame); // Find and colorize the depth data
+
+    // Show dist
+    const int w = depth.as<rs2::video_frame>().get_width();
+    const int h = depth.as<rs2::video_frame>().get_height();
+    std::cout << w << " " << h << std::endl;
+
+
     
     // Creating OpenCV Matrix from a color image
     Mat color(Size(640, 480), CV_8UC3, (void*)depth.get_data(), Mat::AUTO_STEP);
