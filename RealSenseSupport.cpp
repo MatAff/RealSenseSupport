@@ -1,4 +1,8 @@
 
+// TODO: Optimize, no optimization has been done
+// TODO: Only enable relevant streams
+// TODO: Combine return of cv::Mat with collection of dist data
+
 #include "RealSenseSupport.h"
 
 #include <stdio.h>
@@ -26,7 +30,6 @@ RealSenseSupport::RealSenseSupport()
         //Wait for all configured streams to produce a frame
         frames = pipe.wait_for_frames();
     }
-
 }
 
 // Destructor
@@ -74,22 +77,38 @@ cv::Mat RealSenseSupport::getDepth()
     const int h = depth_frame.as<rs2::video_frame>().get_height();
     //std::cout << w << " " << h << std::endl;
 
-    // Assign to OpenCV matrix
-    //cv::Mat m = depth_frame.get_data();
-    //std::cout << depth_frame.as<depth_frame>().get_distance(200, 200);
-    //std::cout << depth_frame->get_distance(200, 200);
-    //.get_distance(200,200) << std::endl; 
-    //depth_frame.get_data();
-    rs2::depth_frame dpt_frame = depth_frame.as<rs2::depth_frame>();
-    float pixel_distance_in_meters = dpt_frame.get_distance(200,200); 
-    std::cout << pixel_distance_in_meters << std::endl;
+    // Get depth of pixel
+    //rs2::depth_frame dpt_frame = depth_frame.as<rs2::depth_frame>();
+    //float pixel_distance_in_meters = dpt_frame.get_distance(200,200); 
+    //std::cout << pixel_distance_in_meters << std::endl;
 
     // Creating OpenCV Matrix from a color image
-    Mat color(Size(640, 480), CV_8SC3, (void*)depth.get_data()); //, Mat::AUTO_STEP);
-    //std::cout << color.at<size_t>(200,200,0) << " " << color.at<size_t>(200,200,0) << " " << color.at<size_t>(200,200,0) << std::endl;
+    Mat color(Size(640, 480), CV_8UC3, (void*)depth.get_data(), Mat::AUTO_STEP);
 
     // Return image
     return color;
 }
 
 
+vector<float> RealSenseSupport::getHorizon()
+{
+    frames = pipe.wait_for_frames();
+    const rs2::frame depth_frame = frames.get_depth_frame(); // Find depth data
+
+    // Show dist
+    const int w = depth_frame.as<rs2::video_frame>().get_width();
+    const int h = depth_frame.as<rs2::video_frame>().get_height();
+
+    // Loop and get dist
+    vector<float> horizon;
+    rs2::depth_frame meter_frame = depth_frame.as<rs2::depth_frame>();
+    //std::cout << "Start: "; 
+    for(size_t c = 0; c < w; c+=10) 
+    {
+        float m = meter_frame.get_distance(c,h/2); 
+        horizon.push_back(m);
+        //std::cout << m << " ";
+    }
+    //std::cout << std::endl;
+    return horizon;
+}

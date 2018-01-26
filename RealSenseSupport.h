@@ -22,6 +22,7 @@ public:
     cv::Mat getColor();
     cv::Mat getIR();
     cv::Mat getDepth();
+    vector<float> getHorizon();
 
 private:
 

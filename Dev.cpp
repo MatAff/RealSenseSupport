@@ -23,6 +23,7 @@ int main()
         //cv::Mat frame = rs.getColor();
         //cv::Mat frame = rs.getIR();
         cv::Mat frame = rs.getDepth();
+        rs.getHorizon();
 
         // Display in a GUI
         namedWindow("Window", WINDOW_AUTOSIZE );
