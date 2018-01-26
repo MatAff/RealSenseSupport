@@ -70,14 +70,23 @@ cv::Mat RealSenseSupport::getDepth()
     rs2::frame depth = color_map(depth_frame); // Find and colorize the depth data
 
     // Show dist
-    const int w = depth.as<rs2::video_frame>().get_width();
-    const int h = depth.as<rs2::video_frame>().get_height();
-    std::cout << w << " " << h << std::endl;
+    const int w = depth_frame.as<rs2::video_frame>().get_width();
+    const int h = depth_frame.as<rs2::video_frame>().get_height();
+    //std::cout << w << " " << h << std::endl;
 
+    // Assign to OpenCV matrix
+    //cv::Mat m = depth_frame.get_data();
+    //std::cout << depth_frame.as<depth_frame>().get_distance(200, 200);
+    //std::cout << depth_frame->get_distance(200, 200);
+    //.get_distance(200,200) << std::endl; 
+    //depth_frame.get_data();
+    rs2::depth_frame dpt_frame = depth_frame.as<rs2::depth_frame>();
+    float pixel_distance_in_meters = dpt_frame.get_distance(200,200); 
+    std::cout << pixel_distance_in_meters << std::endl;
 
-    
     // Creating OpenCV Matrix from a color image
-    Mat color(Size(640, 480), CV_8UC3, (void*)depth.get_data(), Mat::AUTO_STEP);
+    Mat color(Size(640, 480), CV_8SC3, (void*)depth.get_data()); //, Mat::AUTO_STEP);
+    //std::cout << color.at<size_t>(200,200,0) << " " << color.at<size_t>(200,200,0) << " " << color.at<size_t>(200,200,0) << std::endl;
 
     // Return image
     return color;
